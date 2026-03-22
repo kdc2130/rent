@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>재무 종합장 — 2026년 3월</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;font-size:13px;background:#f0f0ee;color:#111;min-height:100vh}
+
+.top-bar{position:sticky;top:0;z-index:200;background:#1a1a1a;color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:48px;gap:16px}
+.top-bar h1{font-size:15px;font-weight:700}
+.top-bar p{font-size:11px;color:#999;margin-top:1px}
+.top-bar-right{display:flex;gap:8px}
+.btn{padding:6px 14px;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;border:1px solid transparent;transition:all .15s}
+.btn-ghost{background:transparent;border-color:#555;color:#ccc}.btn-ghost:hover{background:#333;color:#fff}
+.btn-copy{background:#16a34a;color:#fff;border-color:#16a34a}.btn-copy:hover{background:#15803d}
+.btn-blue{background:#1d4ed8;color:#fff;border-color:#1d4ed8}.btn-blue:hover{background:#1e40af}
+.btn-save{background:#f59e0b;color:#fff;border-color:#f59e0b}.btn-save:hover{background:#d97706}
+.btn-save.saved{background:#16a34a;border-color:#16a34a}
+
+/* ── 요약 ── */
+.summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:14px 20px 0;grid-auto-flow:dense}
+.s-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:10px 13px}
+.s-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.s-value{font-size:16px;font-weight:700;letter-spacing:-.4px}
+.sv-dark{color:#111}.sv-blue{color:#1d4ed8}.sv-green{color:#16a34a}.sv-red{color:#dc2626}
+.s-sub{font-size:10px;color:#999;margin-top:2px}
+.s-formula{font-size:10px;color:#666;margin-top:5px;padding-top:5px;border-top:1px dashed #e0e0dc;line-height:1.6}
+.s-formula span{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:600;margin:1px 0}
+.sf-a{background:#dbeafe;color:#1e3a8a}
+.sf-d{background:#fee2e2;color:#991b1b}
+.sf-n{background:#dcfce7;color:#14532d}
+
+/* ── 그래프 섹션 ── */
+.charts-section{padding:14px 20px 0}
+.chart-row{display:grid;gap:12px;margin-bottom:12px}
+.chart-row-2{grid-template-columns:1fr 1fr}
+.chart-row-3{grid-template-columns:1.2fr 1fr}
+.chart-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:14px}
+.chart-title{font-size:12px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chart-ctrl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.ctrl-inp{padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;font-size:12px;font-family:inherit;width:88px;text-align:center}
+.ctrl-lbl{font-size:11px;color:#777}
+.chart-wrap{position:relative}
+
+.proj-ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0 4px;border-top:1px dashed #e0e0dc;margin-top:8px}
+.proj-inp{padding:4px 8px;border:1px solid #d1d5db;border-radius:4px;font-size:12px;font-family:inherit;width:80px;text-align:right}
+.proj-lbl{font-size:11px;color:#555;font-weight:600;min-width:30px}
+
+/* ── 파이 범례 ── */
+.pie-legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:11px}
+.pie-legend span{display:flex;align-items:center;gap:4px}
+.pie-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.pie-total{font-size:13px;font-weight:700;margin-top:8px;color:#111;padding:6px 10px;background:#f5f5f3;border-radius:5px}
+
+/* ── 본문 ── */
+.page-content{padding:14px 20px 60px;max-width:100%}
+.person-section{margin-bottom:0}
+.person-title{display:flex;align-items:center;gap:10px;padding:11px 16px;border-radius:10px 10px 0 0}
+.person-title.dc{background:#1d4ed8}.person-title.gh{background:#d97706}
+.person-title .av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.person-title .pname{font-size:15px;font-weight:800;color:#fff}
+.person-title .psum{margin-left:auto;font-size:11px;color:rgba(255,255,255,.8)}
+.person-title .psum strong{font-size:14px;font-weight:700;color:#fff}
+.av-gh-hdr{background:rgba(255,255,255,.25)}
+.gh-col .cat1-hdr.h-기초{background:#fef3c7;color:#78350f;border-color:#d97706}
+.gh-col .cat1-hdr.h-ISA{background:#fef9c3;color:#713f12;border-color:#ca8a04}
+.gh-col .cat1-hdr.h-투자{background:#fefce8;color:#713f12;border-color:#eab308}
+.gh-col .tbl-wrap{border-color:#fde68a}
+.gh-col thead th{background:#fffbeb}
+.gh-col .inp{border-color:#fcd34d;background:#fffdf0}
+.gh-col .inp:focus{border-color:#d97706;box-shadow:0 0 0 2px rgba(217,119,6,.12)}
+.gh-col .inp.filled{border-color:#f59e0b;background:#fffbeb}
+.cat1-group{margin-bottom:1px}
+.cat1-hdr{display:flex;align-items:center;gap:6px;padding:7px 14px;border-left:5px solid;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.cat1-hdr.h-기초{background:#f0faf4;color:#14532d;border-color:#16a34a}
+.cat1-hdr.h-ISA{background:#eff6ff;color:#1e3a8a;border-color:#2563eb}
+.cat1-hdr.h-투자{background:#fffbeb;color:#713f12;border-color:#d97706}
+.cat1-hdr .c-desc{font-size:10px;font-weight:500;opacity:.6;margin-left:2px}
+.cat1-hdr .c-sub{margin-left:auto;font-size:11px;font-weight:700}
+.cat1-hdr .c-inpsum{font-size:11px;font-weight:700;margin-left:10px;opacity:.75}
+.tbl-wrap{background:#fff;border:1px solid #e0e0dc;border-top:none;overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:#f5f5f3;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;padding:6px 10px;border-bottom:1px solid #e4e4e0;white-space:nowrap;text-align:left}
+thead th.r{text-align:right}
+thead th.th-cur{background:#f5f5f3;color:#555}
+thead th.th-inp{background:#eff6ff;color:#1e3a8a;text-align:right}
+thead th.th-note{background:#f9f9f7;color:#555}
+tbody tr{border-bottom:1px solid #f2f2f0;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#fafaf8}
+td{padding:8px 10px;vertical-align:middle}
+td.r{text-align:right;font-variant-numeric:tabular-nums}
+td.bg-cur{background:transparent}
+td.bg-inp{background:rgba(239,246,255,.55)}
+td.bg-note{background:rgba(249,249,247,.8)}
+.sub-row{background:#f2f2f0!important}
+.sub-row td{font-weight:800;font-size:13px;border-top:1.5px solid #d4d4d0!important;color:#111}
+.total-row{background:#1a1a1a!important}
+.total-row td{font-weight:700;font-size:13px;color:#fff!important;border-top:2px solid #000!important;padding:9px 10px;font-size:14px}
+
+/* 증감 아래 행 */
+.diff-row td{padding:1px 10px 5px;border-bottom:none!important;background:#fafafa}
+.diff-row.sub-diff-row td{background:#f4f4f2;padding:2px 10px 5px}
+.diff-sub{font-size:12px;font-variant-numeric:tabular-nums;text-align:right;color:#666}
+.val-row td{border-bottom:none!important}
+.diff-clickable{cursor:pointer;border-bottom:1px dashed rgba(0,0,0,.2);padding-bottom:1px}
+.diff-clickable:hover{opacity:.75}
+.sec-title{font-size:12px;font-weight:800;color:#444;text-transform:uppercase;letter-spacing:.07em;padding:8px 0 6px;margin:20px 0 6px;border-bottom:2px solid #ccc}
+.itag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.i-기타{background:#f1f5f9;color:#334155}.i-한투{background:#dbeafe;color:#1e3a8a}.i-키움{background:#fce7f3;color:#831843}
+.i-미래{background:#d1fae5;color:#064e3b}.i-빗썸{background:#fff7ed;color:#7c2d12}.i-KB{background:#fef9c3;color:#713f12}
+.i-농협{background:#dcfce7;color:#14532d}.i-모우다{background:#f3e8ff;color:#581c87}.i-미라클{background:#fce7f3;color:#831843}
+.n{font-size:13px;font-weight:500;color:#222;font-variant-numeric:tabular-nums}
+.n.z{color:#ccc}.n.r{color:#dc2626}.n.g{color:#16a34a}.n.b{color:#1d4ed8}
+.df{font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;font-style:italic;opacity:.85}
+.df.p{color:#16a34a}.df.n{color:#dc2626}.df.z{color:#bbb}
+.inp{width:100%;text-align:right;padding:4px 7px;border:1px solid #c7d2fe;border-radius:4px;font-size:13px;font-family:inherit;color:#111;background:#f8faff;transition:border-color .15s,box-shadow .15s;font-variant-numeric:tabular-nums;font-weight:500;min-width:85px}
+.inp:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12);background:#fff}
+.inp.filled{border-color:#86efac;background:#f0fdf4}.inp.neg-val{border-color:#fca5a5;background:#fff5f5}
+.note-inp{width:100%;padding:4px 7px;border:1px solid #e5e7eb;border-radius:4px;font-size:11px;font-family:inherit;color:#444;background:transparent;min-width:100px}
+.note-inp:focus{outline:none;border-color:#d97706;background:#fffbeb}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1}
+.save-ind{position:fixed;bottom:20px;right:20px;font-size:11px;color:#16a34a;background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:5px 10px;opacity:0;transition:opacity .3s;pointer-events:none}
+.save-ind.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div><h1>재무 종합장</h1><p>2026년 3월 입력 · 전 2개월 참조</p></div>
+  <div class="top-bar-right">
+    <button class="btn btn-ghost" onclick="resetInputs()">입력 초기화</button>
+    <button class="btn btn-save" onclick="saveAll()" id="btn-save">💾 저장</button>
+    <button class="btn btn-copy" onclick="copyTSV()">📋 엑셀 복사</button>
+  </div>
+</div>
+
+<!-- 요약 카드 -->
+<div class="summary-strip" id="sum-strip"></div>
+
+<!-- 그래프 섹션 -->
+<div class="charts-section">
+
+  <!-- Row 1: 자산 추이 (전체 width) -->
+  <div class="chart-row" style="margin-bottom:12px">
+    <div class="chart-card">
+      <div class="chart-title">
+        📈 자산 · 부채 · 순자산 추이 &nbsp;<span id="asset-header-sub" style="font-size:11px;font-weight:500;color:#888"></span>
+        <div class="chart-ctrl">
+          <span class="ctrl-lbl">시작</span>
+          <input class="ctrl-inp" id="range-start" value="2024.02" placeholder="YYYY.MM" style="width:76px">
+          <span class="ctrl-lbl">~</span>
+          <input class="ctrl-inp" id="range-end-yr" value="2026" placeholder="YYYY" style="width:70px;text-align:center" type="number" min="2024" max="2070"><span class="ctrl-lbl" style="margin-left:2px">년</span>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="adjYear(-5)">−5</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="adjYear(-1)">−1</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="adjYear(+1)">+1</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="adjYear(+5)">+5</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="adjYear(+10)">+10</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="adjYear(+20)">+20</button>
+        </div>
+      </div>
+      <div id="chart-legend" style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:8px;font-size:11px;color:#444;align-items:center;min-height:20px"></div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartMain"></canvas></div>
+      <div class="proj-ctrl">
+        <span class="proj-lbl">월 수입</span>
+        <input class="proj-inp" id="p-income" value="21,802,000" oninput="fmtProj(this)"> 원
+        <span class="proj-lbl" style="margin-left:8px">월 지출</span>
+        <input class="proj-inp" id="p-expense" value="6,200,000" oninput="fmtProj(this)"> 원
+        <span class="proj-lbl" style="margin-left:8px">연 수익률</span>
+        <input class="proj-inp" id="p-rate" value="8" style="width:56px"> %
+        <button class="btn btn-blue" style="margin-left:6px;padding:5px 12px" onclick="updateMainChart()">▶ 전망 반영</button>
+      </div>
+      <div id="proj-result" style="font-size:12px;margin-top:8px;min-height:22px;padding:5px 10px;background:#f0fdf4;border-radius:6px;border:1px solid #bbf7d0;display:none"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: 3개 파이차트 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="chart-card">
+      <div class="chart-title">🥧 자산 유형별</div>
+      <div class="chart-wrap" style="height:190px"><canvas id="chartPie1"></canvas></div>
+      <div id="pie-tot1" class="pie-total" style="margin-top:4px"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">👤 동철 / 규현 (기초·ISA·투자)</div>
+      <div class="chart-wrap" style="height:180px"><canvas id="chartPie2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🏦 기관별</div>
+      <div class="chart-wrap" style="height:180px"><canvas id="chartPie3"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 종합장 테이블 -->
+<div class="page-content" id="main-content"></div>
+
+<div class="toast" id="toast"></div>
+<div class="save-ind" id="save-ind">✓ 저장됨</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ════════════════════════════════════════
+   데이터
+════════════════════════════════════════ */
+const DATES=['2024-02','2024-03','2024-04','2024-05','2024-06','2024-07','2024-08','2024-09','2024-10','2024-11','2024-12','2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'];
+const ASSET_TOT=[1076804772,1088355441,1098821100,1113967107,1118140122,1115481562,1122238372,1134862620,1153227635,1157493414,1172795932,1198068894,1203058597,1223115011,1256945284,1302254235,1320101619,1315075077,1320863649,1319496383,1340248931,1361877602,1343742428,1392176166,1311216986];
+const DEBT_TOT=[576929792,583029242,593179141,601449040,598998939,591882549,576445550,586526952,583207740,584382794,588390202,595697610,586064018,596962426,621839834,660187242,659774414,644460339,652856264,647612189,653713952,580523952,580523952,623523952,550753712];
+const NET_TOT=[499874980,505326199,505641959,512518067,519141183,523599013,545792822,548335668,570019895,573110620,584405730,602371284,616994579,626152585,635105450,642066993,660327205,670614738,668007385,671884194,686534979,781353650,763218476,768652214,760463274];
+const FIXED=[1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000,1013000000];
+const LIQUID=[45452103,32529556,40036077,38547194,40060164,39325804,39778180,39492656,40782627,39653303,41119539,54077029,61215023,61117803,61747014,62240087,63024354,62853255,62837205,63745596,66219596,78784952,86057635,379176166,298216986];
+
+// Portfolio (동철+규현 합계)
+const PF={
+  '기초':   [21748044,23070081,22571715,19067637,20058035,19968121,20521530,19968870,23616163,20285105,20622416,20870721,21293812,21396224,19789052,17645993,30752881,26763527,16876959,20882855,22279722,24347334,34641283,37674136,19962490],
+  '국내채권':[2999246,20055778,27177071,27320091,27320091,27331097,27331109,27348345,27414805,27414804,27435812,27435812,26248419,15903029,13808698,13808698,13830930,13830932,13830930,13830929,5799020,6020124,5808823,10773677,5665531],
+  '해외채권':[0,0,2562488,5124548,7744664,7959572,7959572,9274885,10609227,10609227,10609227,10965234,10965234,10965234,10965234,10965234,10965234,11382472,11382472,11382472,11382472,11382472,11382472,11825705,11825705],
+  '주식':   [30810,1172468,1707468,2492269,2656069,6314768,13418698,29659719,43826164,58263931,79222733,79089624,97079368,124646082,152423337,193526697,192967946,193804448,194669682,195706842,202199369,9789515,25866324,158211961,170461977],
+  '코인':   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,17000000,28000000,39212105,39212024,40233064],
+  'P2P':    [0,0,7500000,12000000,15000000,20000000,20000000,20000000,20000000,9000000,0,0,0,0,0,0,0,0,4142034,4142034,4142034,0,0,0,0],
+  'ELS':    [0,0,3000000,3000000,4000000,4000000,3000000,4000000,0,0,0,0,0,0,0,0,0,0,0,0,8577740,23807740,23807740,15230000,15230000],
+  '펀드':   [0,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000,15000],
+  'CMA':    [10009207,4680528,1037193,100622,341016,32298,32298,6521,4209,7261,807956,5103,206362,6554,7380,7382,7382,7523,9813,9815,1010671,1012284,1014225,15525,15537],
+  '예수금': [5000000,1210,5036412,1865581,80359,80359,3625232,2495506,5524967,5624217,850726,290577,1364527,5630140,12199696,1322557,8370352,5959716,5762332,6505699,17025913,244503133,188994456,106218138,34807682],
+};
+const PF_TOT=[327248931,348877602,330742428,379176166,298216986]; // last 5
+const PF_DATES_5=DATES.slice(-5);
+
+// 개인별 소계
+const DC_SUB=[45452103,32529556,40036077,38547194,40060164,39325804,39778180,39492656,40782627,39653303,41119539,54077029,61215023,61117803,61747014,62240087,63024354,62853255,62837205,63745596,66219596,78784952,86057635,112365752,99262777];
+const GH_SUB=[18352669,42825885,45785023,62419913,65079958,63155758,69460192,82369964,99445008,104840111,118676393,130991865,128843574,148997208,182198270,227014148,244077265,239221822,245026444,242750787,261029335,270092650,244684793,266810414,198954209];
+
+// 순자산 계산식 (2026-02 기준)
+const DEBT_2601=623523952; // 2026-01 부채
+const ASSET_2602=1311216986, DEBT_2602=550753712, NET_2602=760463274;
+
+/* ════════════════════════════════════════
+   비고 저장
+════════════════════════════════════════ */
+const NK='fm_notes_v3';
+function loadNotes(){try{return JSON.parse(localStorage.getItem(NK)||'{}')}catch{return{}}}
+function saveNote(k,v){const n=loadNotes();n[k]=v;localStorage.setItem(NK,JSON.stringify(n));flashSave()}
+function getNote(k){return loadNotes()[k]||''}
+function flashSave(){const e=document.getElementById('save-ind');e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1400)}
+
+/* ════════════════════════════════════════
+   유틸
+════════════════════════════════════════ */
+function fmtN(v){if(v===null||v===undefined)return'—';const n=Math.round(Number(v));if(isNaN(n))return'—';return n.toLocaleString('ko-KR')}
+function fmtB(v){if(!v)return'—';const n=Math.round(Number(v));return(n/1e8).toFixed(2)+'억'}
+function fmtM(v){if(!v)return'—';const n=Math.round(Number(v));return(n/1e4).toFixed(0)+'만'}
+function parseV(s){if(!s||s==='')return null;return parseInt(s.replace(/,/g,''),10)||0}
+function dStr(c,p){if(c===null||p===null)return'—';const d=Math.round(c-p);return(d>0?'+':'')+d.toLocaleString('ko-KR')}
+function dCls(c,p){if(c===null||p===null)return'z';return c>p?'p':c<p?'n':'z'}
+function nCls(v){return v===null||v===0?'z':v<0?'r':''}
+function iid(name,idx){return`inp-${name}-${idx}`}
+function noteV(k){return(getNote(k)||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function fmtProj(el){const raw=el.value.replace(/[^\d]/g,'');if(!raw)return;el.value=parseInt(raw).toLocaleString('ko-KR')}
+function parseProjVal(id){return parseV(document.getElementById(id).value)||0}
+
+function dateToIdx(s){
+  const m=s.replace('.','-');
+  const i=DATES.indexOf(m);
+  return i>=0?i:null;
+}
+
+/* ════════════════════════════════════════
+   요약 카드
+════════════════════════════════════════ */
+function buildSummary(){
+  const net=NET_2602, asset=ASSET_2602, debt=DEBT_2602;
+  const prevNet=NET_TOT[23], netChg=net-prevNet;
+  const monthlyAvgChg=Math.round((net-NET_TOT[0])/(NET_TOT.length-1));
+  const FIXED_ASSET=325000000+390000000+298000000; // 두나빌+초원빌+경주
+  const liquid=asset-FIXED_ASSET;
+  // cat1별 유동자산 (동철+규현, 2026-02 기준)
+  const cat기초=ROWS.filter(r=>r.cat1==='기초').reduce((a,r)=>a+r.v[2],0);
+  const catISA =ROWS.filter(r=>r.cat1==='ISA' ).reduce((a,r)=>a+r.v[2],0);
+  const cat투자=ROWS.filter(r=>r.cat1==='투자').reduce((a,r)=>a+r.v[2],0);
+  document.getElementById('sum-strip').innerHTML=`
+    <div class="s-card">
+      <div class="s-label">고정자산 (부동산)</div>
+      <div class="s-value sv-dark">${fmtB(FIXED_ASSET)}</div>
+      <div class="s-sub" style="line-height:1.7;margin-top:4px">
+        두나빌 <span style="font-weight:600;color:#333">3.25억</span><br>
+        초원빌 <span style="font-weight:600;color:#333">3.90억</span><br>
+        경주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:600;color:#333">2.98억</span>
+      </div>
+    </div>
+    <div class="s-card">
+      <div class="s-label">유동자산</div>
+      <div class="s-value sv-blue">${fmtB(liquid)}</div>
+      <div class="s-sub" style="line-height:1.7;margin-top:4px">
+        🟢 기초 <span style="font-weight:600;color:#333">${fmtB(cat기초)}</span><br>
+        🔵 ISA &nbsp;<span style="font-weight:600;color:#333">${fmtB(catISA)}</span><br>
+        🟡 투자 <span style="font-weight:600;color:#333">${fmtB(cat투자)}</span>
+      </div>
+    </div>
+    <div class="s-card">
+      <div class="s-label">부채</div>
+      <div class="s-value sv-red">${fmtB(debt)}</div>
+      <div class="s-sub"><span class="df ${dCls(debt,DEBT_2601)}">${dStr(debt,DEBT_2601)}</span> vs 전월</div>
+    </div>
+    <div class="s-card">
+      <div class="s-label">순자산</div>
+      <div class="s-value sv-dark">${fmtB(net)}</div>
+      <div class="s-sub"><span class="sf-a" style="font-size:10px">자산 ${fmtB(asset)}</span> − <span class="sf-d" style="font-size:10px">부채 ${fmtB(debt)}</span><br><span class="df ${netChg>=0?'p':'n'}">${netChg>=0?'+':''}${fmtM(netChg)}</span> vs 전월</div>
+    </div>
+    <div class="s-card" style="grid-column:span 2">
+      <div class="s-label">순자산 추이 (최근 3개월)</div>
+      <canvas id="sparkNet" height="96" style="width:100%;display:block;margin-top:4px"></canvas>
+    </div>
+`;
+  // 스파크라인: 최근 12개월
+  setTimeout(()=>{
+    const c=document.getElementById('sparkNet');
+    if(!c)return;
+    const n12=NET_TOT.slice(-3);
+    const labels12=DATES.slice(-3);
+    const sparkVals=n12.map(v=>v); // 원 단위 그대로
+    new Chart(c,{
+      type:'line',
+      data:{labels:labels12,datasets:[{
+        data:sparkVals,
+        borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.12)',
+        fill:true,tension:.3,
+        pointRadius:4,pointBackgroundColor:'#16a34a',pointBorderColor:'#fff',pointBorderWidth:1.5,
+        borderWidth:2,
+        datalabels:{display:false}
+      }]},
+      options:{
+        responsive:false,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{enabled:false},
+        },
+        scales:{
+          x:{display:true,ticks:{font:{size:10},color:'#888'},grid:{display:false}},
+          y:{display:false,
+            min:Math.min(...sparkVals)*0.975,
+            max:Math.max(...sparkVals)*1.060}
+        },
+        animation:{onComplete:function(ctx){
+          const chart=ctx.chart;
+          const {ctx:dc,chartArea}=chart;
+          const ds=chart.data.datasets[0];
+          const meta=chart.getDatasetMeta(0);
+          dc.save();
+          dc.font='bold 11px sans-serif';
+          dc.textAlign='center';
+          dc.fillStyle='#0a6644';
+          meta.data.forEach((pt,i)=>{
+            const val=ds.data[i];
+            const lbl=(val/1e8).toFixed(2)+'억';
+            const y=Math.max(chartArea.top+14, pt.y-14);
+            dc.fillText(lbl,pt.x,y);
+          });
+          dc.restore();
+        }}
+      }
+    });
+  },100);
+  // 자산추이 타이틀 부제
+  const ahEl=document.getElementById('asset-header-sub');
+  if(ahEl) ahEl.innerHTML=`고정 <strong style="color:#1d4ed8">${fmtB(FIXED_ASSET)}</strong> · 유동 <strong style="color:#16a34a">${fmtB(liquid)}</strong> · 부채 <strong style="color:#dc2626">${fmtB(debt)}</strong> · 순자산 <strong>${fmtB(net)}</strong>`;
+}
+
+/* ════════════════════════════════════════
+   차트 — 자산 추이
+════════════════════════════════════════ */
+let chartMain=null;
+
+// 날짜 문자열(YYYY-MM 또는 YYYY.MM) → {year, month} 파싱
+function parseYM(s){
+  if(!s) return null;
+  const t=s.trim().replace('.','-');
+  const m4=t.match(/^(\d{4})$/);
+  if(m4) return {year:parseInt(m4[1]),month:12};
+  const m6=t.match(/^(\d{4})-(\d{2})$/);
+  if(m6) return {year:parseInt(m6[1]),month:parseInt(m6[2])};
+  return null;
+}
+function adjYear(delta){
+  const el=document.getElementById('range-end-yr');
+  el.value=Math.max(2024,Math.min(2070,parseInt(el.value||2026)+delta));
+  updateMainChart();
+}
+// 두 날짜 사이 월 수
+function monthsBetween(from,to){
+  return (to.year-from.year)*12+(to.month-from.month);
+}
+// YYYY-MM 레이블 생성
+function addMonths(base,n){
+  const d=new Date(base.year, base.month-1+n, 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+// Chart.js 수직선 플러그인 (현재 시점 표시)
+const vertLinePlugin={
+  id:'vertLine',
+  afterDraw(chart){
+    // chartMain(자산추이)에만 적용
+    if(chart.canvas.id!=='chartMain') return;
+    const {ctx,chartArea,scales}=chart;
+    const nowLabel='2026-02';
+    const idx=chart.data.labels.indexOf(nowLabel);
+    if(idx<0) return;
+    const x=scales.x.getPixelForValue(idx);
+    const {top,bottom}=chartArea;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x,top); ctx.lineTo(x,bottom);
+    ctx.strokeStyle='rgba(220,38,38,.75)';
+    ctx.lineWidth=2;
+    ctx.setLineDash([6,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const txt='현재 (2026.02)';
+    ctx.font='bold 10px sans-serif';
+    const tw=ctx.measureText(txt).width;
+    const bw=tw+14, bh=18;
+    let bx=x-bw/2;
+    bx=Math.max(chartArea.left+2, Math.min(bx, chartArea.right-bw-2));
+    const by=top+4;
+    ctx.fillStyle='rgba(220,38,38,.88)';
+    ctx.beginPath();
+    ctx.roundRect(bx,by,bw,bh,4);
+    ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.textAlign='center';
+    ctx.fillText(txt, bx+bw/2, by+12);
+    ctx.restore();
+  }
+};
+Chart.register(vertLinePlugin);
+
+function updateMainChart(){
+  const startStr=(document.getElementById('range-start').value||'2024.02').trim();
+  const endStr  =(document.getElementById('range-end-yr').value||'2026').trim();
+  const income  =parseProjVal('p-income');
+  const expense =parseProjVal('p-expense');
+  const rate    =parseFloat(document.getElementById('p-rate').value)||8;
+  const mRate   =rate/100/12;
+
+  // 실제 데이터 시작 인덱스
+  const siRaw=dateToIdx(startStr);
+  const si=siRaw!==null?siRaw:0;
+
+  const labels    =[...DATES.slice(si)];
+  const assetSlice=[...ASSET_TOT.slice(si)];
+  const debtSlice =[...DEBT_TOT.slice(si)];
+  const netSlice  =[...NET_TOT.slice(si)];
+  const fixedSlice=[...FIXED.slice(si)].map(v=>Math.round(v/1e6));
+
+  // 전망선 배열 (실제 구간은 null, 현재 지점부터 값)
+  const projNetArr  =new Array(labels.length).fill(null);
+  const projAssetArr=new Array(labels.length).fill(null);
+  const debtProjArr =new Array(labels.length).fill(null);
+
+  // 전망 시작점: 2026-02 (마지막 실제 데이터) → 해당 인덱스에 연결 앵커 세팅
+  const anchorIdx=labels.indexOf('2026-02');
+  if(anchorIdx>=0){
+    projNetArr[anchorIdx]  =Math.round(NET_2602/1e6);
+    projAssetArr[anchorIdx]=Math.round((NET_2602+DEBT_2602)/1e6);
+    debtProjArr[anchorIdx] =Math.round(DEBT_2602/1e6);
+  }
+
+  // 종료 날짜까지 전망 계산
+  const endYM =parseYM(endStr);
+  const baseYM={year:2026,month:2};
+  const projMonths=endYM?Math.max(0,monthsBetween(baseYM,endYM)):12;
+
+  let lastNet=NET_2602, lastDebt=DEBT_2602;
+  for(let m=1;m<=projMonths;m++){
+    const lbl=addMonths(baseYM,m);
+    lastNet=lastNet*(1+mRate)+(income-expense); // 복리 + 순저축
+    const lastAsset=lastNet+lastDebt;
+    labels.push(lbl);
+    assetSlice.push(null);
+    debtSlice.push(null);
+    netSlice.push(null);
+    fixedSlice.push(1013);
+    projNetArr.push(Math.round(lastNet/1e6));
+    projAssetArr.push(Math.round(lastAsset/1e6));
+    debtProjArr.push(Math.round(lastDebt/1e6));
+  }
+
+  // 전망 종료 시점 순자산 (범례에 표시용)
+  const finalNet=Math.round(lastNet/1e8*100)/100;
+
+  const toM=v=>v===null?null:Math.round(v/1e6);
+
+  // 범례 HTML 업데이트
+  const legendEl=document.getElementById('chart-legend');
+  if(legendEl){
+    const isProj=projMonths>0;
+    legendEl.innerHTML=`
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:3px;background:#2563eb;display:inline-block;border-radius:2px"></span>총자산</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:3px;background:#16a34a;display:inline-block;border-radius:2px"></span>순자산</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:2px;background:#dc2626;display:inline-block;border-radius:2px;border-top:2px dashed #dc2626"></span>부채</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:20px;height:2px;background:#94a3b8;display:inline-block;border-radius:2px"></span>고정자산</span>
+      ${isProj?`<span style="display:flex;align-items:center;gap:4px;color:#16a34a;font-weight:700"><span style="width:20px;border-top:2px dashed #16a34a;display:inline-block"></span>전망 순자산</span>
+      <span style="font-size:11px;color:#555;margin-left:4px">종료시점: <strong style="color:#16a34a">${finalNet}억</strong></span>`:''}`;
+  }
+
+  if(chartMain) chartMain.destroy();
+  const ctx=document.getElementById('chartMain').getContext('2d');
+  chartMain=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'총자산',     data:assetSlice.map(toM), borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.07)',fill:true, tension:.3,pointRadius:2,  borderWidth:2,  spanGaps:false},
+        {label:'부채',       data:debtSlice.map(toM),  borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.05)',fill:true, tension:.1,pointRadius:0,  borderWidth:1.5,borderDash:[5,4],spanGaps:false},
+        {label:'순자산',     data:netSlice.map(toM),   borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.1)', fill:true, tension:.3,pointRadius:2.5,borderWidth:2.5,spanGaps:false},
+        {label:'고정자산',   data:fixedSlice,           borderColor:'#cbd5e1',backgroundColor:'transparent',       fill:false,tension:0, pointRadius:0,  borderWidth:1.2,borderDash:[2,4]},
+        {label:'전망 부채',  data:debtProjArr,          borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.03)',fill:true, tension:.1,pointRadius:0,  borderWidth:1.5,borderDash:[5,4],spanGaps:false},
+        {label:'전망 순자산',data:projNetArr,           borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.05)',fill:true, tension:.35,pointRadius:0, borderWidth:2,  borderDash:[7,4],spanGaps:false},
+        {label:'전망 총자산',data:projAssetArr,         borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.04)',fill:true, tension:.35,pointRadius:0, borderWidth:1.5,borderDash:[7,4],spanGaps:false},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title:items=>{
+              const lbl=items[0].label;
+              const ym=parseYM(lbl);
+              if(!ym) return lbl;
+              const isAfter=ym.year>2026||(ym.year===2026&&ym.month>2);
+              return `${lbl}  (${isAfter?'전망':'실적'})`;
+            },
+            label:c=>{
+              if(c.raw===null||c.raw===undefined) return '';
+              const n=c.raw; // 백만원 단위
+              return ` ${c.dataset.label}: ${(n/100).toFixed(2)}억`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{font:{size:10},maxRotation:45,autoSkip:true,maxTicksLimit:28},grid:{color:'rgba(0,0,0,.04)'}},
+        y:{ticks:{font:{size:10},callback:v=>(v/100).toFixed(1)+'억'},grid:{color:'rgba(0,0,0,.06)'}}
+      }
+    }
+  });
+
+  // 전망 종료 순자산 표시
+  const prEl=document.getElementById('proj-result');
+  if(projMonths>0){
+    prEl.style.display='block';
+    prEl.innerHTML=`<span style="color:#16a34a;font-weight:700">📌 ${endStr} 예상 순자산: <strong style="font-size:14px">${finalNet}억</strong></span>&nbsp;&nbsp;<span style="color:#555;font-size:11px">연 ${rate}% 복리 · 월 순저축 ${((income-expense)/10000).toFixed(0)}만원 기준</span>`;
+  } else {
+    prEl.style.display='none';
+    prEl.innerHTML='';
+  }
+}
+
+/* ════════════════════════════════════════
+   차트 — 3개 파이차트
+════════════════════════════════════════ */
+function makeDoughnut(canvasId, labels, vals, colors, legId, totId){
+  const total=vals.reduce((a,b)=>a+b,0);
+  const ctx=document.getElementById(canvasId).getContext('2d');
+  new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:1,borderColor:'#fff'}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'48%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>{
+          if(!c.raw) return '';
+          const pct=((c.raw/total)*100).toFixed(1);
+          return ` ${c.label}: ${(c.raw/1e8).toFixed(2)}억 (${pct}%)`;
+        }}}
+      }
+    }
+  });
+  if(legId){
+    document.getElementById(legId).innerHTML=labels.map((l,i)=>{
+      if(!vals[i]) return '';
+      const pct=((vals[i]/total)*100).toFixed(1);
+      return`<span><span class="pie-dot" style="background:${colors[i]}"></span>${l} ${pct}%</span>`;
+    }).join('');
+  }
+  if(totId) document.getElementById(totId).innerHTML=`합계: <strong>${(total/1e8).toFixed(2)}억</strong>`;
+}
+
+function buildPieChart(){
+  // ── 1. 자산 유형별: 기초 / (채권+펀드) / ELS / (CMA+예수금) / 주식 / 코인
+  const I=24; // 2026-02
+  const v기초  = (PF['기초']?.[I]||0);
+  const v채권  = (PF['국내채권']?.[I]||0)+(PF['해외채권']?.[I]||0)+(PF['펀드']?.[I]||0);
+  const vELS   = (PF['ELS']?.[I]||0);
+  const v예수  = (PF['CMA']?.[I]||0)+(PF['예수금']?.[I]||0);
+  const v주식  = (PF['주식']?.[I]||0);
+  const v코인  = (PF['코인']?.[I]||0);
+  {
+    const p1labels=['기초','채권·펀드','ELS','CMA·예수금','주식','코인'];
+    const p1vals=[v기초,v채권,vELS,v예수,v주식,v코인];
+    const p1colors=['#9ca3af','#3b82f6','#f472b6','#84cc16','#ef4444','#06b6d4'];
+    const p1total=p1vals.reduce((a,b)=>a+b,0);
+    // afterDraw로 각 조각 위에 라벨 표시
+    // 테이블 렌더링
+    const ctx1=document.getElementById('chartPie1').getContext('2d');
+    new Chart(ctx1,{
+      type:'bar',
+      data:{
+        labels:p1labels,
+        datasets:[{
+          data:p1vals.map(v=>Math.round(v/1e6)),
+          backgroundColor:p1colors,
+          borderRadius:5,
+          barPercentage:.65
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:c=>` ${c.label}: ${(c.raw/100).toFixed(2)}억`}}
+        },
+        scales:{
+          x:{ticks:{font:{size:10},color:'#444'},grid:{display:false}},
+          y:{ticks:{font:{size:10},callback:v=>(v/100).toFixed(1)+'억'},grid:{color:'rgba(0,0,0,.05)'}}
+        }
+      }
+    });
+    document.getElementById('pie-tot1').innerHTML=`합계: <strong>${(p1total/1e8).toFixed(2)}억</strong>`;
+  }
+
+  // ── 2. 동철/규현 × 기초/ISA/투자 묶음 가로 막대
+  const dcRows=ROWS.filter(r=>r.name==='동철');
+  const ghRows=ROWS.filter(r=>r.name==='규현');
+  const dc기초=dcRows.filter(r=>r.cat1==='기초').reduce((a,r)=>a+r.v[2],0);
+  const dcISA =dcRows.filter(r=>r.cat1==='ISA' ).reduce((a,r)=>a+r.v[2],0);
+  const dc투자=dcRows.filter(r=>r.cat1==='투자').reduce((a,r)=>a+r.v[2],0);
+  const gh기초=Math.max(0,ghRows.filter(r=>r.cat1==='기초').reduce((a,r)=>a+r.v[2],0));
+  const ghISA =ghRows.filter(r=>r.cat1==='ISA' ).reduce((a,r)=>a+r.v[2],0);
+  const gh투자=ghRows.filter(r=>r.cat1==='투자').reduce((a,r)=>a+r.v[2],0);
+  {
+    const ctx2=document.getElementById('chartPie2').getContext('2d');
+    // 구분선 플러그인: 기초/ISA/투자 사이에 실선
+    const dividerPlugin2={
+      id:'divider2',
+      afterDraw(chart){
+        const {ctx,chartArea,scales}=chart;
+        const xScale=scales.x;
+        ctx.save();
+        ctx.strokeStyle='rgba(0,0,0,0.25)';
+        ctx.lineWidth=1.5;
+        ctx.setLineDash([]);
+        // 각 그룹 경계 (0.5, 1.5 사이)
+        [0.5,1.5].forEach(pos=>{
+          const x=xScale.getPixelForValue(pos);
+          ctx.beginPath();
+          ctx.moveTo(x,chartArea.top);
+          ctx.lineTo(x,chartArea.bottom);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+    };
+    new Chart(ctx2,{
+      type:'bar',
+      data:{
+        labels:['기초','ISA','투자'],
+        datasets:[
+          {label:'동철',data:[dc기초,dcISA,dc투자].map(v=>Math.round(v/1e6)),
+           backgroundColor:'#3b82f6',borderRadius:4,barPercentage:.55},
+          {label:'규현',data:[gh기초,ghISA,gh투자].map(v=>Math.round(v/1e6)),
+           backgroundColor:'#d97706',borderRadius:4,barPercentage:.55},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:12,padding:8}},
+          tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${(c.raw/100).toFixed(2)}억`}},
+          divider2:{}
+        },
+        scales:{
+          x:{ticks:{font:{size:11},color:'#333'},grid:{display:false}},
+          y:{ticks:{font:{size:10},callback:v=>(v/100).toFixed(1)+'억'},grid:{color:'rgba(0,0,0,.05)'}}
+        }
+      },
+      plugins:[dividerPlugin2]
+    });
+  }
+
+  // ── 3. 기관별 (한투/키움/빗썸/기타 4개)
+  const han_dc=dcRows.filter(r=>r.inst==='한투').reduce((a,r)=>a+r.v[2],0);
+  const han_gh=ghRows.filter(r=>r.inst==='한투').reduce((a,r)=>a+r.v[2],0);
+  const ki_dc =dcRows.filter(r=>r.inst==='키움').reduce((a,r)=>a+r.v[2],0);
+  const ki_gh =ghRows.filter(r=>r.inst==='키움').reduce((a,r)=>a+r.v[2],0);
+  const bit   =ROWS.filter(r=>r.inst==='빗썸').reduce((a,r)=>a+r.v[2],0);
+  // 기타 = 나머지 전체 (KB,농협,모우다,미라클,미래,은행기초 등)
+  const etc4  =ROWS.filter(r=>!['한투','키움','빗썸'].includes(r.inst)).reduce((a,r)=>a+Math.max(0,r.v[2]),0);
+  {
+    const inst_labels=['한투','키움','빗썸','기타'];
+    const inst_vals=[han_dc+han_gh, ki_dc+ki_gh, bit, etc4].map(v=>Math.round(v/1e6));
+    const inst_colors=['#3b82f6','#ec4899','#f59e0b','#94a3b8'];
+    const ctx3=document.getElementById('chartPie3').getContext('2d');
+    new Chart(ctx3,{
+      type:'bar',
+      data:{
+        labels:inst_labels,
+        datasets:[{
+          label:'금액',data:inst_vals,
+          backgroundColor:inst_colors,borderRadius:4,barPercentage:.6
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:c=>` ${c.label}: ${(c.raw/100).toFixed(2)}억`}}
+        },
+        scales:{
+          x:{ticks:{font:{size:11},color:'#333'},grid:{display:false}},
+          y:{ticks:{font:{size:10},callback:v=>(v/100).toFixed(1)+'억'},grid:{color:'rgba(0,0,0,.05)'}}
+        }
+      }
+    });
+  }
+}
+
+function buildTrendChart(){ /* 삭제됨 */ }
+
+/* ════════════════════════════════════════
+   종합장 테이블
+════════════════════════════════════════ */
+const MONTHS=['2025-12','2026-01','2026-03'];
+const ROWS=[
+  {name:'동철',inst:'기타',cat1:'기초',cat2:'적금',    product:'적금 (급여)',                     v:[0,0,0]},
+  {name:'동철',inst:'기타',cat1:'기초',cat2:'주택청약',product:'주택청약 (국민)',                  v:[580000,600000,620000]},
+  {name:'동철',inst:'기타',cat1:'기초',cat2:'연금',    product:'연금 (신협)',                     v:[19300000,19400000,19500000]},
+  {name:'동철',inst:'기타',cat1:'기초',cat2:'입출금',  product:'입출금, 달러박스',                v:[9021282,16067637,1781776]},
+  {name:'동철',inst:'한투',cat1:'ISA', cat2:'국내채권',product:'자산-상품유형별-채권(총액-수익)',  v:[5094134,5094131,5094131]},
+  {name:'동철',inst:'한투',cat1:'ISA', cat2:'주식',    product:'자산-상품유형별-주식(총액-수익)',  v:[2471988,24811988,34136488]},
+  {name:'동철',inst:'한투',cat1:'ISA', cat2:'ELS',     product:'—',                              v:[0,0,0]},
+  {name:'동철',inst:'한투',cat1:'ISA', cat2:'예수금',  product:'예수금, RP',                     v:[45434169,43234715,33975432]},
+  {name:'동철',inst:'한투',cat1:'투자',cat2:'주식',    product:'위탁계좌(밑)_매입금액',           v:[35372,35372,35372]},
+  {name:'동철',inst:'키움',cat1:'투자',cat2:'펀드',    product:'금융상품-펀드-총투자원금',         v:[15000,15000,15000]},
+  {name:'동철',inst:'미래',cat1:'투자',cat2:'CMA',     product:'미래에셋 네이버통장 + CMA',       v:[1014225,15525,15537]},
+  {name:'동철',inst:'빗썸',cat1:'투자',cat2:'코인',    product:'빗썸',                           v:[3091465,3091384,4089041]},
+  {name:'규현',inst:'기타',cat1:'기초',cat2:'적금',    product:'카뱅 자유적금',                   v:[220000,230000,240000]},
+  {name:'규현',inst:'기타',cat1:'기초',cat2:'주택청약',product:'주택청약 (국민)',                  v:[1160000,1180000,1200000]},
+  {name:'규현',inst:'기타',cat1:'기초',cat2:'입출금',  product:'입출금, KB저축예금, 달러박스, 26주적금',v:[4360001,196499,-3379286]},
+  {name:'규현',inst:'한투',cat1:'ISA', cat2:'국내채권',product:'자산-상품유형별-채권(총액-수익)',  v:[714689,5679546,571400]},
+  {name:'규현',inst:'한투',cat1:'ISA', cat2:'주식',    product:'자산-상품유형별-주식(총액-수익)',  v:[346241,73715441,78012790]},
+  {name:'규현',inst:'한투',cat1:'ISA', cat2:'예수금',  product:'예수금, RP',                     v:[57876294,0,7998]},
+  {name:'규현',inst:'한투',cat1:'투자',cat2:'예수금',  product:'예수금, RP',                     v:[85683993,62887771,811317]},
+  {name:'규현',inst:'한투',cat1:'투자',cat2:'주식',    product:'위탁계좌(밑)_매입금액',           v:[16766785,9973350,9973501]},
+  {name:'규현',inst:'키움',cat1:'투자',cat2:'국내채권',product:'금융상품-국내채권(총투자원금)',    v:[0,0,0]},
+  {name:'규현',inst:'키움',cat1:'투자',cat2:'해외채권',product:'금융상품-해외채권(총투자원금)',    v:[11382472,11825705,11825705]},
+  {name:'규현',inst:'키움',cat1:'투자',cat2:'ELS',     product:'금융상품-ELS(총투자원금)',         v:[23807740,15230000,15230000]},
+  {name:'규현',inst:'키움',cat1:'투자',cat2:'주식',    product:'국내주식 / 계좌(총매입)',          v:[0,43007600,43007600]},
+  {name:'규현',inst:'키움',cat1:'투자',cat2:'주식',    product:'해외주식 / 계좌(매입금액)',        v:[6024797,6448934,5091531]},
+  {name:'규현',inst:'키움',cat1:'투자',cat2:'예수금',  product:'MY-상품별자산-예수금',            v:[0,95652,12935]},
+  {name:'규현',inst:'빗썸',cat1:'투자',cat2:'코인',    product:'빗썸',                           v:[36120640,36120640,36144023]},
+  {name:'규현',inst:'KB',  cat1:'투자',cat2:'주식',    product:'KB종합위탁(총매입금액)',           v:[1434,0,1432]},
+  {name:'규현',inst:'농협',cat1:'투자',cat2:'주식',    product:'농협(QV종합매매)+토스증권(원금)', v:[219707,219276,203263]},
+  {name:'규현',inst:'모우다',cat1:'투자',cat2:'P2P',   product:'모우다 잔여투자원금',              v:[0,0,0]},
+  {name:'규현',inst:'미라클',cat1:'투자',cat2:'P2P',   product:'미라클',                         v:[0,0,0]},
+];
+const DEBT_ROWS=[
+  {label:'약관대출 (규현)',             v:[0,43000000,98920000]},
+  {label:'약관대출 (동철)',             v:[0,0,149730000]},
+  {label:'담보 / 두나빌 (새마을금고)',  v:[91362447,91362447,91362447]},
+  {label:'담보 / 초원빌 (119동+)',     v:[87553470,87553470,87553470]},
+  {label:'담보 / 경주집',              v:[195000000,195000000,195000000]},
+  {label:'담보 / 119동',               v:[60536140,60536140,-148463860]},
+  {label:'투자금 / 초원빌 (119어머니)',v:[69420240,69420240,0]},
+  {label:'기타 / 양주',                v:[50000000,50000000,50000000]},
+  {label:'기타 / 태현 (미래에셋)',      v:[15651655,15651655,15651655]},
+  {label:'기타 / 태율',                v:[11000000,11000000,11000000]},
+];
+const DEBT_TOT_3=[580523952,623523952,550753712];
+const NET_TOT_3=[763218476,768652214,760463274];
+const NET_CHG_3=[null,5433738,-8188940];
+const INC_ROWS=[
+  {label:'일진 급여',v:[10454625,16001745,16001745]},
+  {label:'두나빌',   v:[1003710,658550,1100000]},
+  {label:'초원빌',   v:[3000000,3000000,3000000]},
+  {label:'규환',     v:[1700000,1700000,1700000]},
+];
+const INC_TOT_3=[16158335,21360295,21801745];
+const CAT1_META={'기초':{icon:'🟢',desc:'예금·저축·연금'},'ISA':{icon:'🔵',desc:'절세계좌(한투)'},'투자':{icon:'🟡',desc:'위탁·코인·채권·P2P'}};
+
+
+const THEAD=`<thead><tr>
+  <th style="width:46px">기관</th><th style="width:52px">구분</th><th>상품명</th>
+  <th class="r" style="width:108px">${MONTHS[0]}</th>
+  <th class="r" style="width:108px">${MONTHS[1]}</th>
+  <th class="r th-cur" style="width:108px">${MONTHS[2]}</th>
+  <th class="th-inp" style="width:112px">3월 입력</th>
+</tr></thead>`;
+
+/* 비고 팝업 */
+function showNotePopup(el, noteKey){
+  closeNotePopup();
+  const val=getNote(noteKey);
+  const popup=document.createElement('div');
+  popup.id='note-popup';
+  popup.style.cssText='position:fixed;z-index:9999;background:#1a1a1a;color:#fff;padding:12px 14px;border-radius:8px;font-size:12px;max-width:280px;line-height:1.6;box-shadow:0 4px 24px rgba(0,0,0,.4);pointer-events:auto';
+  const r=el.getBoundingClientRect();
+  let left=r.left, top=r.bottom+6;
+  if(left+280>window.innerWidth) left=window.innerWidth-290;
+  popup.style.left=left+'px'; popup.style.top=top+'px';
+  popup.innerHTML=`<div style="font-weight:700;color:#f59e0b;margin-bottom:6px">📝 증감 사유</div>
+    <textarea id="note-popup-ta" style="width:100%;height:64px;background:#2a2a2a;color:#fff;border:1px solid #555;border-radius:4px;padding:6px;font-size:12px;font-family:inherit;resize:none">${val||''}</textarea>
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:7px">
+      <button onclick="closeNotePopup()" style="padding:4px 11px;background:transparent;color:#aaa;border:1px solid #555;border-radius:4px;cursor:pointer;font-size:11px">취소</button>
+      <button onclick="saveNotePopup('${noteKey}')" style="padding:4px 11px;background:#f59e0b;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600">저장</button>
+    </div>`;
+  document.body.appendChild(popup);
+  setTimeout(()=>document.addEventListener('click',outsideClickClose,{once:true}),100);
+}
+function outsideClickClose(e){
+  const p=document.getElementById('note-popup');
+  if(p&&!p.contains(e.target)) closeNotePopup();
+}
+function saveNotePopup(key){
+  const ta=document.getElementById('note-popup-ta');
+  if(ta){saveNote(key,ta.value);showToast('비고 저장됨');}
+  closeNotePopup();
+}
+function closeNotePopup(){const p=document.getElementById('note-popup');if(p)p.remove();}
+
+function diffCell(cur, prev, noteKey){
+  if(cur===null||prev===null) return '—';
+  const d=Math.round(cur-prev);
+  const cls=d>0?'p':d<0?'n':'z';
+  const txt=(d>0?'+':'')+fmtN(d);
+  const hasNote=!!getNote(noteKey);
+  const dot=hasNote?`<sup style="font-size:8px;margin-left:1px;color:#f59e0b">✎</sup>`:'';
+  return `<span class="df ${cls} diff-clickable" onclick="showNotePopup(this,'${noteKey}')" style="cursor:pointer">${txt}${dot}</span>`;
+}
+
+function buildTable(){
+  // Build aligned side-by-side: same cat1 group in same row
+  const cats=['기초','ISA','투자'];
+  let h='';
+
+  // Header row: person titles
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:0">`;
+  for(const person of['동철','규현']){
+    const rows=ROWS.filter(r=>r.name===person);
+    const totC=rows.reduce((a,r)=>a+r.v[2],0);
+    const cc=person==='동철'?'dc':'gh';
+    h+=`<div class="person-title ${cc}${person==='규현'?' gh-col':''}" style="border-radius:10px 10px 0 0;margin-bottom:0">
+      <div class="av">${person[0]}</div>
+      <span class="pname">${person}</span>
+      <span class="psum">전월: <strong>${fmtN(totC)}</strong> │ 입력: <strong id="psum-${person}">—</strong></span>
+    </div>`;
+  }
+  h+=`</div>`;
+
+  // Cat1 group rows: 동철 left, 규현 right — same row per cat1
+  for(const cat1 of cats){
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1px">`;
+    for(const person of['동철','규현']){
+      const rows=ROWS.filter(r=>r.name===person&&r.cat1===cat1);
+      const meta=CAT1_META[cat1];
+      const ccC=rows.reduce((a,r)=>a+r.v[2],0),ccP=rows.reduce((a,r)=>a+r.v[1],0);
+      const cc0=rows.reduce((a,r)=>a+r.v[0],0),cc1=rows.reduce((a,r)=>a+r.v[1],0);
+      h+=`<div class="cat1-group${person==='규현'?' gh-col':''}" style="margin:0">
+        <div class="cat1-hdr h-${cat1}">
+          <span>${meta.icon} ${cat1}</span>
+          <span class="c-desc">${meta.desc}</span>
+          <span class="c-sub">전월: ${fmtN(ccC)}</span>
+          <span class="c-inpsum" id="cs-${person}-${cat1}">│ 입력: —</span>
+        </div>
+        <div class="tbl-wrap"><table>${THEAD}<tbody>`;
+      rows.forEach(row=>{
+        const gi=ROWS.indexOf(row);
+        const id=iid(person,gi);
+        h+=`<tr class="val-row">
+          <td><span class="itag i-${row.inst}">${row.inst}</span></td>
+          <td style="font-size:12px;color:#666;font-weight:600">${row.cat2}</td>
+          <td style="font-size:12px;color:#333;font-weight:500;line-height:1.4;max-width:120px;word-break:keep-all">${row.product}</td>
+          <td class="r"><span class="n ${nCls(row.v[0])}">${row.v[0]===0?'—':fmtN(row.v[0])}</span></td>
+          <td class="r"><span class="n ${nCls(row.v[1])}">${row.v[1]===0?'—':fmtN(row.v[1])}</span></td>
+          <td class="r bg-cur"><span class="n ${nCls(row.v[2])}">${row.v[2]===0?'—':fmtN(row.v[2])}</span></td>
+          <td class="bg-inp"><input class="inp" id="${id}" type="text" inputmode="numeric" placeholder="0" autocomplete="off"
+            data-prev="${row.v[2]}" data-person="${person}" data-gi="${gi}"
+            oninput="onInp(this)" onkeydown="onKey(event,this)"/></td>
+        </tr>
+        <tr class="diff-row">
+          <td colspan="3" style="padding:0 0 4px 0;border-bottom:1px solid #ebebea"></td>
+          <td class="r diff-sub"></td>
+          <td class="r diff-sub">${diffCell(row.v[1],row.v[0],'nk_'+gi+'_m1')}</td>
+          <td class="r diff-sub bg-cur">${diffCell(row.v[2],row.v[1],'nk_'+gi+'_m2')}</td>
+          <td class="bg-inp r diff-sub" id="idiff-${id}">—</td>
+        </tr>`;
+      });
+      h+=`<tr class="sub-row">
+        <td colspan="3" style="font-size:11px;color:#777">소계</td>
+        <td class="r"><span class="n">${fmtN(cc0)}</span></td>
+        <td class="r"><span class="n">${fmtN(cc1)}</span></td>
+        <td class="r bg-cur"><span class="n">${fmtN(ccC)}</span></td>
+        <td class="bg-inp r" id="ci-${person}-${cat1}">—</td>
+      </tr>
+      <tr class="diff-row sub-diff-row">
+        <td colspan="3"></td>
+        <td class="r diff-sub"></td>
+        <td class="r diff-sub">${diffCell(cc1,cc0,'nk_sub_'+person+'_'+cat1+'_m1')}</td>
+        <td class="r diff-sub bg-cur">${diffCell(ccC,ccP,'nk_sub_'+person+'_'+cat1+'_m2')}</td>
+        <td class="bg-inp r diff-sub" id="cid-${person}-${cat1}">—</td>
+      </tr></tbody></table></div>
+      </div>`;
+    }
+    h+=`</div>`;
+  }
+
+  // Total row
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:0">`;
+  for(const person of['동철','규현']){
+    const rows=ROWS.filter(r=>r.name===person);
+    const totC=rows.reduce((a,r)=>a+r.v[2],0),totP=rows.reduce((a,r)=>a+r.v[1],0);
+    const tot0=rows.reduce((a,r)=>a+r.v[0],0),tot1=rows.reduce((a,r)=>a+r.v[1],0);
+    h+=`<div class="${person==='규현'?'gh-col':''}"><div class="tbl-wrap" style="border-top:1px solid #e0e0dc"><table><tbody>
+      <tr class="total-row">
+        <td colspan="3">${person} 합계</td>
+        <td class="r">${fmtN(tot0)}</td><td class="r">${fmtN(tot1)}</td>
+        <td class="r">${fmtN(totC)}</td>
+        <td class="r" id="pt-${person}">—</td>
+      </tr>
+      <tr class="diff-row" style="background:#1a1a1a">
+        <td colspan="3" style="padding:3px 0"></td>
+        <td class="r diff-sub" style="color:#aaa"></td>
+        <td class="r diff-sub" style="color:#aaa">${diffCell(tot1,tot0,'nk_tot_'+person+'_m1')}</td>
+        <td class="r diff-sub" style="color:#aaa">${diffCell(totC,totP,'nk_tot_'+person+'_m2')}</td>
+        <td class="r diff-sub" style="color:#aaa" id="ptd-${person}">—</td>
+      </tr>
+    </tbody></table></div></div>`;
+  }
+  h+=`</div>`;
+
+  h+=buildBottom();
+  document.getElementById('main-content').innerHTML=h;
+}
+
+// buildPerson kept for updSums compatibility (doesn't render anymore)
+function buildPerson(person){ return ''; }
+
+function buildPerson(person){
+  const rows=ROWS.filter(r=>r.name===person);
+  const cc=person==='동철'?'dc':'gh';
+  const totC=rows.reduce((a,r)=>a+r.v[2],0),totP=rows.reduce((a,r)=>a+r.v[1],0);
+  const tot0=rows.reduce((a,r)=>a+r.v[0],0),tot1=rows.reduce((a,r)=>a+r.v[1],0);
+  let h=`<div class="person-section">
+    <div class="person-title ${cc}">
+      <div class="av">${person[0]}</div>
+      <span class="pname">${person}</span>
+      <span class="psum">전월 합계: <strong>${fmtN(totC)}</strong> │ 3월 입력: <strong id="psum-${person}">—</strong></span>
+    </div>`;
+  for(const cat1 of['기초','ISA','투자']){
+    const crows=rows.filter(r=>r.cat1===cat1);
+    if(!crows.length) continue;
+    const meta=CAT1_META[cat1];
+    const ccC=crows.reduce((a,r)=>a+r.v[2],0),ccP=crows.reduce((a,r)=>a+r.v[1],0);
+    const cc0=crows.reduce((a,r)=>a+r.v[0],0),cc1=crows.reduce((a,r)=>a+r.v[1],0);
+    h+=`<div class="cat1-group">
+      <div class="cat1-hdr h-${cat1}">
+        <span>${meta.icon} ${cat1}</span>
+        <span class="c-desc">${meta.desc}</span>
+        <span class="c-sub">전월: ${fmtN(ccC)}</span>
+        <span class="c-inpsum" id="cs-${person}-${cat1}">│ 입력: —</span>
+      </div>
+      <div class="tbl-wrap"><table>${THEAD}<tbody>`;
+    crows.forEach(row=>{
+      const gi=ROWS.indexOf(row);
+      const id=iid(person,gi);
+      h+=`<tr class="val-row">
+        <td><span class="itag i-${row.inst}">${row.inst}</span></td>
+        <td style="font-size:12px;color:#666;font-weight:600">${row.cat2}</td>
+        <td style="font-size:12px;color:#333;font-weight:500;line-height:1.4;max-width:120px;word-break:keep-all;font-size:11px">${row.product}</td>
+        <td class="r"><span class="n ${nCls(row.v[0])}">${row.v[0]===0?'—':fmtN(row.v[0])}</span></td>
+        <td class="r"><span class="n ${nCls(row.v[1])}">${row.v[1]===0?'—':fmtN(row.v[1])}</span></td>
+        <td class="r bg-cur"><span class="n ${nCls(row.v[2])}">${row.v[2]===0?'—':fmtN(row.v[2])}</span></td>
+        <td class="bg-inp"><input class="inp" id="${id}" type="text" inputmode="numeric" placeholder="0" autocomplete="off"
+          data-prev="${row.v[2]}" data-person="${person}" data-gi="${gi}"
+          oninput="onInp(this)" onkeydown="onKey(event,this)"/></td>
+      </tr>
+      <tr class="diff-row">
+        <td colspan="3" style="padding:0 0 4px 0;border-bottom:1px solid #ebebea"></td>
+        <td class="r diff-sub"></td>
+        <td class="r diff-sub">${diffCell(row.v[1],row.v[0],'nk_'+gi+'_m1')}</td>
+        <td class="r diff-sub bg-cur">${diffCell(row.v[2],row.v[1],'nk_'+gi+'_m2')}</td>
+        <td class="bg-inp r diff-sub" id="idiff-${id}">—</td>
+      </tr>`;
+    });
+    h+=`<tr class="sub-row">
+      <td colspan="3" style="font-size:11px;color:#777">소계</td>
+      <td class="r"><span class="n">${fmtN(cc0)}</span></td>
+      <td class="r"><span class="n">${fmtN(cc1)}</span></td>
+      <td class="r bg-cur"><span class="n">${fmtN(ccC)}</span></td>
+      <td class="bg-inp r" id="ci-${person}-${cat1}">—</td>
+    </tr>
+    <tr class="diff-row sub-diff-row">
+      <td colspan="3"></td>
+      <td class="r diff-sub"></td>
+      <td class="r diff-sub">${diffCell(cc1,cc0,'nk_sub_'+person+'_'+cat1+'_m1')}</td>
+      <td class="r diff-sub bg-cur">${diffCell(ccC,ccP,'nk_sub_'+person+'_'+cat1+'_m2')}</td>
+      <td class="bg-inp r diff-sub" id="cid-${person}-${cat1}">—</td>
+    </tr></tbody></table></div></div>`;
+  }
+  h+=`<div class="tbl-wrap" style="border-top:1px solid #e0e0dc"><table><tbody>
+    <tr class="total-row">
+      <td colspan="3">${person} 합계</td>
+      <td class="r">${fmtN(tot0)}</td><td class="r">${fmtN(tot1)}</td>
+      <td class="r">${fmtN(totC)}</td>
+      <td class="r" id="pt-${person}">—</td>
+    </tr>
+    <tr class="diff-row" style="background:#1a1a1a">
+      <td colspan="3" style="padding:3px 0"></td>
+      <td class="r diff-sub" style="color:#aaa"></td>
+      <td class="r diff-sub" style="color:#aaa">${diffCell(tot1,tot0,'nk_tot_'+person+'_m1')}</td>
+      <td class="r diff-sub" style="color:#aaa">${diffCell(totC,totP,'nk_tot_'+person+'_m2')}</td>
+      <td class="r diff-sub" style="color:#aaa" id="ptd-${person}">—</td>
+    </tr>
+  </tbody></table></div></div>`;
+  return h;
+}
+
+function buildBottom(){
+  // 컬럼: 항목 | 전전월 | 전월 | 당월(입력) | 증감
+  const T2=`<thead><tr>
+    <th>항목</th>
+    <th class="r" style="width:88px">${MONTHS[0]}</th>
+    <th class="r" style="width:88px">${MONTHS[1]}</th>
+    <th class="th-inp" style="width:104px">${MONTHS[2]} (입력)</th>
+    <th class="r th-cur" style="width:60px">증감</th>
+  </tr></thead>`;
+
+  // 과거 2개월 + 입력란 + 증감 행
+  function bRow(label, vals, inpId, pfx){
+    const prev = vals[1]; // 전월(2026-01)
+    const prevVal = vals[2]; // 직전 당월(2026-02 실적) → placeholder
+    return `<tr class="val-row">
+      <td style="font-size:12px;font-weight:500">${label}</td>
+      <td class="r"><span class="n ${nCls(vals[0])}" style="font-size:12px">${vals[0]===0||vals[0]===null?'—':fmtN(vals[0])}</span></td>
+      <td class="r"><span class="n ${nCls(vals[1])}" style="font-size:12px">${vals[1]===0||vals[1]===null?'—':fmtN(vals[1])}</span></td>
+      <td class="bg-inp"><input class="inp" id="${inpId}" type="text" inputmode="numeric"
+        placeholder="${prevVal===0?'0':fmtN(prevVal)}" autocomplete="off"
+        data-prev="${vals[2]}" data-type="bottom"
+        oninput="onBotInp(this)" style="font-size:12px"/></td>
+      <td class="r diff-sub bg-cur" id="${inpId}-diff">—</td>
+    </tr>
+    <tr class="diff-row">
+      <td style="padding:0 0 3px 0;border-bottom:1px solid #ebebea"></td>
+      <td class="r diff-sub"></td>
+      <td class="r diff-sub">${diffCell(vals[1],vals[0],pfx+'_m1')}</td>
+      <td class="r diff-sub bg-inp" style="font-size:11px;color:#888">↑ 직접 입력</td>
+      <td class="r diff-sub bg-cur" id="${inpId}-diff2">—</td>
+    </tr>`;
+  }
+
+  // 부채
+  let debtH=`<div class="tbl-wrap"><table>${T2}<tbody>`;
+  DEBT_ROWS.forEach((row,i)=>{
+    debtH+=bRow(row.label, row.v, 'debt-inp-'+i, 'nk_d'+i);
+  });
+  debtH+=`<tr class="sub-row">
+    <td>부채 합계</td>
+    <td class="r"><span class="n r" style="font-size:12px">${fmtN(DEBT_TOT_3[0])}</span></td>
+    <td class="r"><span class="n r" style="font-size:12px">${fmtN(DEBT_TOT_3[1])}</span></td>
+    <td class="bg-inp r" id="debt-tot-inp" style="font-size:12px;font-weight:700;color:#dc2626">—</td>
+    <td class="r diff-sub bg-cur" id="debt-tot-diff">—</td>
+  </tr>
+  <tr class="diff-row sub-diff-row"><td></td><td class="r diff-sub"></td>
+    <td class="r diff-sub">${diffCell(DEBT_TOT_3[1],DEBT_TOT_3[0],'nk_dT_m1')}</td>
+    <td class="r diff-sub bg-inp"></td>
+    <td class="r diff-sub bg-cur" id="debt-tot-diff2">—</td>
+  </tr></tbody></table></div>`;
+
+  // 수입
+  let incH=`<div class="tbl-wrap"><table>${T2}<tbody>`;
+  INC_ROWS.forEach((row,i)=>{
+    incH+=bRow(row.label, row.v, 'inc-inp-'+i, 'nk_inc'+i);
+  });
+  incH+=`<tr class="sub-row">
+    <td>수입 합계</td>
+    <td class="r"><span class="n g" style="font-size:12px">${fmtN(INC_TOT_3[0])}</span></td>
+    <td class="r"><span class="n g" style="font-size:12px">${fmtN(INC_TOT_3[1])}</span></td>
+    <td class="bg-inp r" id="inc-tot-inp" style="font-size:12px;font-weight:700;color:#16a34a">—</td>
+    <td class="r diff-sub bg-cur" id="inc-tot-diff">—</td>
+  </tr>
+  <tr class="diff-row sub-diff-row"><td></td><td class="r diff-sub"></td>
+    <td class="r diff-sub">${diffCell(INC_TOT_3[1],INC_TOT_3[0],'nk_incT_m1')}</td>
+    <td class="r diff-sub bg-inp"></td>
+    <td class="r diff-sub bg-cur" id="inc-tot-diff2">—</td>
+  </tr></tbody></table></div>`;
+
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;margin-top:20px">
+    <div><div class="sec-title">부채</div>${debtH}</div>
+    <div><div class="sec-title">수입</div>${incH}</div>
+  </div>`;
+}
+
+function onBotInp(el){
+  const raw=el.value.replace(/[^\d\-]/g,'');
+  if(raw===''||raw==='-'){el.value=raw;}
+  else{const n=parseInt(raw,10);if(!isNaN(n))el.value=n.toLocaleString('ko-KR');}
+  const cur=parseV(el.value);
+  el.classList.toggle('filled',cur!==null&&cur>=0);
+  el.classList.toggle('neg-val',cur!==null&&cur<0);
+  const prev=parseInt(el.dataset.prev)||0;
+  const noteKey=el.id+'_m3'; // e.g. debt-inp-0_m3
+  const diffEl=document.getElementById(el.id+'-diff');
+  const diff2El=document.getElementById(el.id+'-diff2');
+  function renderDiff(targetEl){
+    if(!targetEl) return;
+    if(cur===null){targetEl.innerHTML='—';return;}
+    const d=cur-prev;
+    const cls=d>0?'p':d<0?'n':'z';
+    const hasNote=!!getNote(noteKey);
+    const dot=hasNote?`<sup style="font-size:8px;color:#f59e0b">✎</sup>`:'';
+    targetEl.innerHTML=`<span class="df ${cls} diff-clickable" onclick="showNotePopup(this,'${noteKey}')" style="cursor:pointer">${(d>0?'+':'')+fmtN(d)}${dot}</span>`;
+  }
+  renderDiff(diffEl);
+  renderDiff(diff2El);
+  updBotTotals();
+}
+
+function updBotTotals(){
+  function mkDiff(val, prev, noteKey){
+    const d=val-prev;
+    const cls=d>0?'p':d<0?'n':'z';
+    const hasNote=!!getNote(noteKey);
+    const dot=hasNote?`<sup style="font-size:8px;color:#f59e0b">✎</sup>`:'';
+    return `<span class="df ${cls} diff-clickable" onclick="showNotePopup(this,'${noteKey}')" style="cursor:pointer">${(d>0?'+':'')+fmtN(d)}${dot}</span>`;
+  }
+  // 부채 합계
+  let dSum=0, dCnt=0;
+  DEBT_ROWS.forEach((_,i)=>{
+    const el=document.getElementById('debt-inp-'+i);
+    const v=el?parseV(el.value):null;
+    if(v!==null){dSum+=v;dCnt++;}
+  });
+  const dTotEl=document.getElementById('debt-tot-inp');
+  const dDiffEl=document.getElementById('debt-tot-diff');
+  const dDiff2El=document.getElementById('debt-tot-diff2');
+  if(dCnt>0&&dTotEl){
+    dTotEl.textContent=fmtN(dSum);
+    const dt=mkDiff(dSum,DEBT_TOT_3[1],'nk_dT_m3');
+    if(dDiffEl) dDiffEl.innerHTML=dt;
+    if(dDiff2El) dDiff2El.innerHTML=dt;
+  }else{
+    if(dTotEl) dTotEl.textContent='—';
+    if(dDiffEl) dDiffEl.textContent='—';
+    if(dDiff2El) dDiff2El.textContent='—';
+  }
+  // 수입 합계
+  let iSum=0, iCnt=0;
+  INC_ROWS.forEach((_,i)=>{
+    const el=document.getElementById('inc-inp-'+i);
+    const v=el?parseV(el.value):null;
+    if(v!==null){iSum+=v;iCnt++;}
+  });
+  const iTotEl=document.getElementById('inc-tot-inp');
+  const iDiffEl=document.getElementById('inc-tot-diff');
+  const iDiff2El=document.getElementById('inc-tot-diff2');
+  if(iCnt>0&&iTotEl){
+    iTotEl.textContent=fmtN(iSum);
+    const it=mkDiff(iSum,INC_TOT_3[1],'nk_incT_m3');
+    if(iDiffEl) iDiffEl.innerHTML=it;
+    if(iDiff2El) iDiff2El.innerHTML=it;
+  }else{
+    if(iTotEl) iTotEl.textContent='—';
+    if(iDiffEl) iDiffEl.textContent='—';
+    if(iDiff2El) iDiff2El.textContent='—';
+  }
+}
+
+
+/* ════════════════════════════════════════
+   입력 이벤트
+════════════════════════════════════════ */
+function onInp(el){
+  const raw=el.value.replace(/[^\d\-]/g,'');
+  if(raw===''||raw==='-'){el.value=raw;}
+  else{const n=parseInt(raw,10);if(!isNaN(n))el.value=n.toLocaleString('ko-KR');}
+  const cur=parseV(el.value);
+  el.classList.toggle('filled',cur!==null&&cur>=0);
+  el.classList.toggle('neg-val',cur!==null&&cur<0);
+  updRowDiff(el);updSums(el.dataset.person);
+}
+function onKey(e,el){
+  if(e.key==='Enter'||e.key==='Tab'){
+    e.preventDefault();
+    const person=el.dataset.person,gi=parseInt(el.dataset.gi);
+    const pis=ROWS.map((r,i)=>({r,i})).filter(({r})=>r.name===person);
+    const pos=pis.findIndex(({i})=>i===gi);
+    if(pos<pis.length-1){const nx=document.getElementById(iid(person,pis[pos+1].i));if(nx){nx.focus();nx.select();}}
+  }
+}
+function updRowDiff(el){
+  const prev=parseInt(el.dataset.prev)||0,cur=parseV(el.value);
+  const de=document.getElementById('idiff-'+el.id);
+  if(!de)return;
+  if(cur===null){de.textContent='—';de.className='r bg-inp';return;}
+  const d=cur-prev;
+  de.innerHTML=`<span class="df ${d>0?'p':d<0?'n':'z'}">${(d>0?'+':'')+fmtN(d)}</span>`;
+}
+function updSums(person){
+  const pis=ROWS.map((r,i)=>({r,i})).filter(({r})=>r.name===person);
+  let pTot=0,pCnt=0;
+  for(const cat1 of['기초','ISA','투자']){
+    const cis=pis.filter(({r})=>r.cat1===cat1);
+    let cSum=0,cCnt=0;
+    cis.forEach(({r,i})=>{
+      const el=document.getElementById(iid(person,i));
+      const v=el?parseV(el.value):null;
+      if(v!==null){cSum+=v;cCnt++;pTot+=v;pCnt++;}
+    });
+    const prevC=cis.reduce((a,{r})=>a+r.v[2],0);
+    const csE=document.getElementById(`cs-${person}-${cat1}`);
+    const ciE=document.getElementById(`ci-${person}-${cat1}`);
+    const cidE=document.getElementById(`cid-${person}-${cat1}`);
+    if(csE)csE.textContent=cCnt?`│ 입력: ${fmtN(cSum)}`:'│ 입력: —';
+    if(ciE)ciE.innerHTML=cCnt?`<span class="n">${fmtN(cSum)}</span>`:'—';
+    if(cidE&&cCnt){const d=cSum-prevC;cidE.innerHTML=`<span class="df ${d>0?'p':d<0?'n':'z'}">${(d>0?'+':'')+fmtN(d)}</span>`;}
+    else if(cidE)cidE.innerHTML='—';
+  }
+  const prevTot=pis.reduce((a,{r})=>a+r.v[2],0);
+  const ptE=document.getElementById(`pt-${person}`);
+  const ptdE=document.getElementById(`ptd-${person}`);
+  const psE=document.getElementById(`psum-${person}`);
+  if(pCnt>0){
+    if(ptE)ptE.innerHTML=`<span class="n">${fmtN(pTot)}</span>`;
+    if(psE)psE.textContent=fmtN(pTot)+'원';
+    if(ptdE){const d=pTot-prevTot;ptdE.innerHTML=`<span class="df ${d>0?'p':d<0?'n':'z'}">${(d>0?'+':'')+fmtN(d)}</span>`;}
+  }else{
+    if(ptE)ptE.innerHTML='—';if(ptdE)ptdE.innerHTML='—';if(psE)psE.textContent='—';
+  }
+  updAll();
+}
+function updAll(){
+  let tot=0,has=false;
+  ROWS.forEach((r,i)=>{const el=document.getElementById(iid(r.name,i));const v=el?parseV(el.value):null;if(v!==null){tot+=v;has=true;}});
+  const e=document.getElementById('sum-all');if(e)e.textContent=has?fmtN(tot):'—';
+}
+function resetInputs(){
+  ROWS.forEach((r,i)=>{
+    const el=document.getElementById(iid(r.name,i));
+    if(el){el.value='';el.classList.remove('filled','neg-val');}
+    const de=document.getElementById(`idiff-${iid(r.name,i)}`);
+    if(de){de.textContent='—';de.className='r bg-inp';}
+  });
+  ['동철','규현'].forEach(p=>updSums(p));
+}
+function copyTSV(){
+  const lines=['성명\t기관\t구분1\t구분2\t상품명\t2026-03'];
+  ROWS.forEach((r,i)=>{
+    const el=document.getElementById(iid(r.name,i));
+    const v=el&&el.value!==''?(parseV(el.value)??''):'';
+    lines.push(`${r.name}\t${r.inst}\t${r.cat1}\t${r.cat2}\t${r.product}\t${v}`);
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('클립보드 복사 완료'));
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+/* ── 저장 / 불러오기 ── */
+const SAVE_KEY='fm_inputs_v1';
+function saveAll(){
+  const data={};
+  ROWS.forEach((r,i)=>{
+    const el=document.getElementById(iid(r.name,i));
+    if(el&&el.value!=='') data['inp_'+i]=el.value;
+  });
+  DEBT_ROWS.forEach((_,i)=>{
+    const el=document.getElementById('debt-inp-'+i);
+    if(el&&el.value!=='') data['debt_'+i]=el.value;
+  });
+  INC_ROWS.forEach((_,i)=>{
+    const el=document.getElementById('inc-inp-'+i);
+    if(el&&el.value!=='') data['inc_'+i]=el.value;
+  });
+  data.proj_income=document.getElementById('p-income').value;
+  data.proj_expense=document.getElementById('p-expense').value;
+  data.proj_rate=document.getElementById('p-rate').value;
+  data.range_start=document.getElementById('range-start').value;
+  data.range_end=document.getElementById('range-end-yr').value;
+  localStorage.setItem(SAVE_KEY,JSON.stringify(data));
+  const btn=document.getElementById('btn-save');
+  btn.textContent='✓ 저장됨';btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='💾 저장';btn.classList.remove('saved');},2000);
+}
+function loadSaved(){
+  try{
+    const data=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');
+    ROWS.forEach((r,i)=>{
+      const el=document.getElementById(iid(r.name,i));
+      if(el&&data['inp_'+i]){
+        el.value=data['inp_'+i];
+        const cur=parseV(el.value);
+        el.classList.toggle('filled',cur!==null&&cur>=0);
+        el.classList.toggle('neg-val',cur!==null&&cur<0);
+        updRowDiff(el);
+      }
+    });
+    DEBT_ROWS.forEach((_,i)=>{
+      const el=document.getElementById('debt-inp-'+i);
+      if(el&&data['debt_'+i]){
+        el.value=data['debt_'+i];
+        const cur=parseV(el.value);
+        el.classList.toggle('filled',cur!==null&&cur>=0);
+        el.classList.toggle('neg-val',cur!==null&&cur<0);
+        onBotInp(el);
+      }
+    });
+    INC_ROWS.forEach((_,i)=>{
+      const el=document.getElementById('inc-inp-'+i);
+      if(el&&data['inc_'+i]){
+        el.value=data['inc_'+i];
+        const cur=parseV(el.value);
+        el.classList.toggle('filled',cur!==null&&cur>=0);
+        el.classList.toggle('neg-val',cur!==null&&cur<0);
+        onBotInp(el);
+      }
+    });
+    if(data.proj_income) document.getElementById('p-income').value=data.proj_income;
+    if(data.proj_expense) document.getElementById('p-expense').value=data.proj_expense;
+    if(data.proj_rate) document.getElementById('p-rate').value=data.proj_rate;
+    if(data.range_start) document.getElementById('range-start').value=data.range_start;
+    if(data.range_end) document.getElementById('range-end-yr').value=data.range_end;
+    ['동철','규현'].forEach(p=>updSums(p));
+    // 저장된 전망 파라미터로 차트 재갱신
+    if(data.proj_income||data.proj_rate) updateMainChart();
+  }catch(e){console.warn('load failed',e);}
+}
+
+/* ── 초기화 ── */
+buildSummary();
+updateMainChart();
+buildPieChart();
+buildTable();
+loadSaved();
+</script>
+</body>
+</html>
