@@ -1707,7 +1707,24 @@ function calcPayStats(rows, rDef) {
 
 
 
-
+function onReNameInput(el){
+  var isVacant=el.value.trim()==="공실";
+  var fields=document.getElementById("re-fields");
+  if(!fields)return;
+  if(isVacant){
+    fields.style.opacity="0.35";
+    fields.style.pointerEvents="none";
+    var dEl=document.getElementById("re-d");
+    var rentEl=document.getElementById("re-rent");
+    var dueEl=document.getElementById("re-due");
+    if(dEl)dEl.value="";
+    if(rentEl)rentEl.value="";
+    if(dueEl)dueEl.value="";
+  } else {
+    fields.style.opacity="1";
+    fields.style.pointerEvents="auto";
+  }
+}
 function reNumFmt(el){el.value=el.value.replace(/[^0-9,]/g,"");}
 function reNumOnly(el){el.value=el.value.replace(/[^0-9]/g,"");}
 // ── 호실 정보 override (보증금/월세/기준일 수동 수정) ─────────
@@ -1725,6 +1742,8 @@ function getRoomInfo(b,r){
   if(!base)return null;
   var ov=roLoad(b,r);
   if(ov){
+    if(ov){
+    if(ov.t    !==undefined)base.t   =ov.t;
     if(ov.d    !==undefined)base.d   =ov.d;
     if(ov.rent !==undefined)base.rent=ov.rent;
     if(ov.due  !==undefined)base.due =ov.due;
@@ -1744,11 +1763,16 @@ function openRoomEdit(b,room){_reB=b;_reRoom=room;
   pop.style.cssText="position:fixed;z-index:600;background:var(--sf);border:1px solid var(--bd2);border-radius:var(--r);box-shadow:0 6px 24px rgba(0,0,0,.18);width:280px;overflow:hidden;";
   document.body.appendChild(pop);
   pop.innerHTML="<div style='padding:10px 14px;background:#e6e4de;border-bottom:2px solid var(--bd2);display:flex;justify-content:space-between;align-items:center'>"
-    +"<span style='font-size:13px;font-weight:800'>"+room+"호 정보 수정</span>"
+<span style='font-size:13px;font-weight:800'>"+room+"호 정보 수정</span>"
     +"<button onclick='closeRoomEdit()' style='border:none;background:none;font-size:16px;cursor:pointer;color:var(--t3);padding:0'>✕</button>"
     +"</div>"
     +"<div style='padding:12px 14px;display:flex;flex-direction:column;gap:10px'>"
-    +"<div><div style='font-size:11px;font-weight:700;color:var(--t3);margin-bottom:3px'>보증금</div>"
+    +"<div><div style='font-size:11px;font-weight:700;color:var(--t3);margin-bottom:3px'>세입자명 (공실 입력 시 자동처리)</div>"
+    +"<input id='re-t' type='text' value='"+qh(r.t||"")+"'"
+    +" style='width:100%;padding:5px 8px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:14px;font-family:inherit'"
+    +" oninput='onReNameInput(this)' placeholder='세입자명 또는 공실'></div>"
+    +"<div id='re-fields'>"
+    +"<div style='margin-bottom:10px'><div style='font-size:11px;font-weight:700;color:var(--t3);margin-bottom:3px'>보증금</div>"
     +"<input id='re-d' type='text' value='"+(r.d?r.d.toLocaleString("ko-KR"):"")+"'"
     +" style='width:100%;padding:5px 8px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:14px;font-family:inherit;text-align:right'"
     +" oninput='reNumFmt(this)' placeholder='0'></div>"
@@ -1760,6 +1784,7 @@ function openRoomEdit(b,room){_reB=b;_reRoom=room;
     +"<input id='re-due' type='text' value='"+(r.due||"")+"'"
     +" style='width:100%;padding:5px 8px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:14px;font-family:inherit;text-align:center'"
     +" oninput='reNumOnly(this)' placeholder='일 (1~31)' maxlength='2'></div>"
+    +"</div>"
     +"<div style='display:flex;gap:8px;margin-top:2px'>"
     +"<button id='re-save-btn' style='flex:1;padding:8px 0;background:#111;color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-family:inherit;cursor:pointer;font-weight:700'>저장</button>"
     +"<button id='re-reset-btn' style='padding:8px 12px;background:var(--s2);color:var(--t2);border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;font-family:inherit;cursor:pointer'>초기화</button>"
@@ -1795,18 +1820,21 @@ function closeRoomEdit(){
 var _reB=null,_reRoom=null;
 function saveRoomEdit(){
   if(!_reB||!_reRoom){alert("오류: 빌딩/호실 정보가 없습니다. 다시 시도해주세요.");return;}
-  var dEl=document.getElementById("re-d");
+  var tEl  =document.getElementById("re-t");
+  var dEl  =document.getElementById("re-d");
   var rentEl=document.getElementById("re-rent");
-  var dueEl=document.getElementById("re-due");
-  if(!dEl||!rentEl||!dueEl){alert("오류: 입력 필드를 찾을 수 없습니다.");return;}
-  var d   =parseInt((dEl.value||"").replace(/,/g,""))||0;
-  var rent=parseInt((rentEl.value||"").replace(/,/g,""))||0;
-  var due =parseInt(dueEl.value||"")||null;
-  var key=roKey(_reB,_reRoom);
-  var obj={d:d,rent:rent,due:due};
-  gsSet("ro",key,obj);
+  var dueEl =document.getElementById("re-due");
+  if(!tEl||!dEl||!rentEl||!dueEl){alert("오류: 입력 필드를 찾을 수 없습니다.");return;}
+  var t   =(tEl.value||"").trim();
+  var isVacant=t==="공실"||t==="";
+  var d   =isVacant?0:parseInt((dEl.value||"").replace(/,/g,""))||0;
+  var rent=isVacant?0:parseInt((rentEl.value||"").replace(/,/g,""))||0;
+  var due =isVacant?null:(parseInt(dueEl.value||"")||null);
+  var obj={t:isVacant?"":t, d:d, rent:rent, due:due};
+  gsSet("ro",roKey(_reB,_reRoom),obj);
   closeRoomEdit();
   render();
+}
 }
 function resetRoomEdit(){
   if(!_reB||!_reRoom)return;
